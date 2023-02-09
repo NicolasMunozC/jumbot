@@ -2,15 +2,14 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const product = new Schema({
-    productId: String,
+    productId: { type: String, required: true, unique: true},
     productName: String,
+    category: String,
     brand: String,
     productReference: String,
-    // categoriesIds: Array,
-    // categories: String,
     linkText: String,
     // origen: Array,
-    supermarket: String,
+    supermarket: {type: String, default: 'Jumbo'},
     prices: {
         price: Number,
         listPrice: Number,
@@ -25,7 +24,10 @@ const product = new Schema({
         imageUrl: String,
         imageTag: String,
     },
+    promotions: Array,
+    promotionsUpdate: Date,
     created: {type: Date, default: Date.now},
+    lastUpdate: Date,
 });
 
 module.exports = mongoose.model('Product', product)
