@@ -1,46 +1,34 @@
-const { connect, disconnect } = require('./db/db')
+const dotenv = require('dotenv').config()
+const cron = require('cron');
+const { dbConnect } = require('./db')
 const Product = require('./models/Product')
+const { listeningBot } = require('./jumbot')
+const { sendTCPromotions, sendAllPromotions, sendActivePromotions } = require('./jobs')
 
+const testing = true
 
-
-async function checkProducts(){
-    let checkedProducts = []
-    
-    const products = await getAllProducts()
-    if(products && products.length > 0) {
-        products.map( (product) => {
-            const oldPrice = getOldPrice(product.prices.priceHistory)
-            if(product.prices.price < oldPrice){ 
-                console.log(product);
-                checkedProducts.push(product) 
-            }
-        }) 
-    } else { console.log('No hay data')}
-    
+async function startBot(){
+    await dbConnect()
+    console.log('[DB] connected')
+    listeningBot()
+    if(testing) cronSimulator() //DEVELOP FUNCTION
+    if(!testing) jumbot.start() //PRODUCTION FUNCTION
 }
 
+const jumbot = new cron.CronJob('00 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,0 * * *', async function() {
+    const currentHour = new Date().getHours()
+    console.log('[JOBS] started')
 
-async function getAllProducts(){
-    console.log('Se solicitaron todos los productos')
-    await connect()
-    console.log('Base datos conectada')
-    try {
-        const res = await Product.find({})
-        if(res && res.length > 0) return res
-    } catch (error) {
-        console.log('Error: ',error)
-        
-    } finally {
-        await disconnect()
-        console.log('Base de datos desconectada')
+    if(currentHour === 12){
+        console.log('[JOBS] free channel started')
     }
+    console.log('[JOBS] vip channel started')
+});
+
+
+async function cronSimulator(){
+    // await sendTCPromotions()
+    await sendActivePromotions({testing: testing})
 }
 
-function getOldPrice(array){
-    if(array.length > 2) return array[array.length - 2]
-    return 0
-}
-
-
-
-checkProducts()
+startBot()
