@@ -1,22 +1,15 @@
 const TelegramBot = require('node-telegram-bot-api');
 const opts = { parse_mode: 'Markdown' }
 const { getUserData, saveUser } = require('./bot.utils');
-const { dbConnect } = require('./db');
 
 const token = process.env.TELEGRAM_TOKEN_API;
 const vipChatId = process.env.VIP_CHAT_ID
 const freeChatId = process.env.FREE_CHAT_ID
+const testChatId = process.env.TEST_CHAT_ID
 
 const bot = new TelegramBot(token, {polling: true});
 
-
-function testingBot(){
-    console.log('Bot esta funcionando');
-}    
-
 async function listeningBot(){
-    await dbConnect()
-    console.log('[DB] connected');
     bot.on('message', msg => {
         const chatId = msg.chat.id
         const userId = msg.from.id
@@ -67,6 +60,10 @@ function sendMessage(id, message){
     bot.sendMessage(id, message, opts)
 }
 
+function sendTestMessage(message){
+    bot.sendMessage(testChatId, message, opts)
+}
+
 function sendVipMessage(message){
     bot.sendMessage(vipChatId, message, opts)
 }
@@ -80,5 +77,5 @@ module.exports = {
     sendMessage,
     sendVipMessage,
     sendFreeMessage,
-    testingBot,
+    sendTestMessage,
 }
