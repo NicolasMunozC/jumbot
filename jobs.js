@@ -1,9 +1,9 @@
-const { sendVipMessage, sendFreeMessage, sendMessage } = require("./jumbot");
-const {  getAllProductsWithTCPromotions, getPriceFormatted, getDateFormmated } = require("./utils");
+const { sendVipMessage, sendFreeMessage, sendTestMessage } = require("./jumbot");
+const {  getAllProductsWithTCPromotions, getPriceFormatted, getProductToSend, getAllProductsWithPromotions, getDateFormatted, getDateValue, checkedProducts } = require("./utils");
 
 
 
-async function sendTCPromotions(){
+async function sendTCPromotions({testing}){
     const products = await getAllProductsWithTCPromotions()
     products.forEach( (product, index) => {
         const promotionType = product.promotion.type
@@ -20,6 +20,85 @@ async function sendTCPromotions(){
     })
 }
 
+async function sendAllPromotions({vip, testing}){
+    const products = await getAllProductsWithPromotions()
+    products.forEach( async (product, i) => {
+        const productToSend = await getProductToSend(product)
+        const newMessage = (`*${productToSend.productName}* \nPrecio Normal: ${getPriceFormatted(productToSend.normalPrice)} \nPrecio Oferta: ${getPriceFormatted(productToSend.offerPrice)}\nCantidad: ${productToSend.unitMultiplier} ${productToSend.measurementUnit}\n${
+            productToSend.promotions.map( promotion => {
+                const promotionType = promotion.type
+                let promotionPrice = 0
+                let promotionNeeds = ''
+                if(promotionType === 'm'){ promotionPrice = promotion.value }
+                if(promotionType === 'p') { promotionPrice = ((productToSend.normalPrice)*(1-(promotion.value/100)))}
+                if(!promotion.tcenco && !promotion.cencoPrime) promotionNeeds = 'todo medio de pago'
+                if(promotion.tcenco) promotionNeeds = 'Tarjeta cencosud'
+                if(promotion.cencoPrime) promotionNeeds = 'Jumbo Prime'
+                if(!vip && getDateValue(promotion.start) >= Date.now().valueOf()) {
+                    return `Habra una oferta con *${promotionNeeds}*, _para saber fechas y valores ingresa al canal VIP_.\n`
+                }
+                return `Oferta con *${promotionNeeds}*: ${getPriceFormatted(promotionPrice)}\n_Esta oferta comienza el: ${getDateFormatted(promotion.start)} y termina el ${getDateFormatted(promotion.end)}_\nPublicada en: ${promotion.where}\n`
+            })}URL: https://jumbo.cl/${productToSend.url}/p\n_Nota: El link no se abre con la app jumbo (ya descubriremos como hacerlo) se debe abrir desde el navegador_`)
+
+        if(!testing){
+            if(vip) {
+                setTimeout( () => {
+                    sendVipMessage(newMessage)
+                },5000*i )
+            }
+            if(!vip) {
+                setTimeout( () => {
+                    sendFreeMessage(newMessage)
+                },5000*i)
+            }
+        } else {
+            // setTimeout( () => {
+            //     sendTestMessage(newMessage)
+            // },5000*i)
+        }
+    })
+    sendTestMessage(products.length)
+}
+
+async function sendActivePromotions({testing}){
+    let productsToSend = []
+    const products = await checkedProducts()
+    products.forEach( product => {
+        if(product.promotions.length > 0){
+            productsToSend.push(product)
+        }
+    })
+    productsToSend.forEach( (product, i) => {
+        const newMessage = `*${product.productName}*\nPrecio Normal: ${getPriceFormatted(product.normalPrice*product.unitMultiplier)}\nPrecio Oferta: ${getPriceFormatted(product.offerPrice*product.unitMultiplier)}\nCantidad: ${product.unitMultiplier} ${product.measurementUnit}\n${
+            product.promotions.map( promotion => {
+                const promotionType = promotion.type
+                let promotionPrice = 0
+                let promotionNeeds = ''
+                if(promotionType === 'm'){ promotionPrice = promotion.value*product.unitMultiplier }
+                if(promotionType === 'p') { promotionPrice = (((product.normalPrice)*(1-(promotion.value/100)))*product.unitMultiplier)}
+                if(!promotion.tcenco && !promotion.cencoPrime) promotionNeeds = 'todo medio de pago'
+                if(promotion.tcenco) promotionNeeds = 'Tarjeta cencosud'
+                if(promotion.cencoPrime) promotionNeeds = 'Jumbo Prime'
+                return `Oferta con *${promotionNeeds}*: ${getPriceFormatted(promotionPrice)}\n_Esta oferta comenzo el: ${getDateFormatted(promotion.start)} y terminara el ${getDateFormatted(promotion.end)}_\nPublicada en: ${promotion.description === 'SPID' ? 'App SPID' : 'Jumbo.cl'}\n`
+            })
+        }URL: https://jumbo.cl/${product.url}/p\n_Nota: El link no se abre con la app jumbo (ya descubriremos como hacerlo) se debe abrir desde el navegador_`
+
+        if(testing){
+            setTimeout( () => {
+                sendTestMessage(newMessage)
+            }, 4000*i)
+
+        } else {
+            setTimeout( () => {
+                sendFreeMessage(newMessage)
+            }, 4000*i)
+        }
+    })
+
+}
+
 module.exports = {
-    sendTCPromotions
+    sendTCPromotions,
+    sendAllPromotions,
+    sendActivePromotions,
 }
