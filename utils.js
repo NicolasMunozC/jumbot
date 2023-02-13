@@ -123,7 +123,7 @@ function checkPromotions(promotions){
     return allValidPromotions
 }
 
-async function checkedProducts(){
+async function getProductsWithCheckedValidPromotions(){
     let checkedProducts = []
     const products = await getAllProductsWithPromotions()
     products.forEach( product => {
@@ -155,6 +155,6 @@ module.exports = {
     getDateFormatted,
     getDateValue,
     checkPromotions,
-    checkedProducts,
+    getProductsWithCheckedValidPromotions,
     updateLog
 }

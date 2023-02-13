@@ -1,5 +1,5 @@
 const { sendVipMessage, sendFreeMessage, sendTestMessage, sendPrivateMessage } = require("./jumbot");
-const {  getAllProductsWithTCPromotions, getPriceFormatted, getProductToSend, getAllProductsWithPromotions, getDateFormatted, getDateValue, checkedProducts } = require("./utils");
+const {  getAllProductsWithTCPromotions, getPriceFormatted, getProductToSend, getAllProductsWithPromotions, getDateFormatted, getDateValue, getProductsWithCheckedValidPromotions } = require("./utils");
 
 
 async function sendTCPromotions({testing}){
@@ -50,7 +50,7 @@ async function sendAllPromotions({testing}){
 
 async function sendActivePromotions({testing}){
     let productsToSend = []
-    const products = await checkedProducts()
+    const products = await getProductsWithCheckedValidPromotions()
     products.forEach( product => {
         if(product.promotions.length > 0){
             productsToSend.push(product)
@@ -86,18 +86,8 @@ async function sendActivePromotions({testing}){
     })
 }
 
-async function saveAllActivePromotions({testing}){
-    let productsToSave = []
-    const products = await checkedProducts()
-    products.forEach( product => {
-        if(product.promotions.length > 0){
-            productsToSave.push(product)
-        }
-    })
-    productsToSave.forEach( product => {
-        savePromotion(product)
-    })
-
+async function sendVipSuperOffers(){
+    
 }
 
 module.exports = {
