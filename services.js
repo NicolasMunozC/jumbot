@@ -10,9 +10,14 @@ function savePromotion(promotion){
     return newPromotion.save()
 }
 
+function deleteAllPromotion(){
+    return Promotion.deleteMany({})
+}
+
 
 
 module.exports = {
     fetchAllProducts,
     savePromotion,
+    deleteAllPromotion,
 }
