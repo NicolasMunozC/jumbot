@@ -156,4 +156,5 @@ module.exports = {
     getDateValue,
     checkPromotions,
     checkedProducts,
+    updateLog
 }
