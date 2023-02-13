@@ -1,7 +1,9 @@
 const User = require('./models/User')
 
 async function getUserData(id){
-    const response = await User.findOne(id)
+    if(!id) console.error('You must provide an ID');
+    const user = { userId: id}
+    const response = await User.findOne(user)
     return response
 }
 
