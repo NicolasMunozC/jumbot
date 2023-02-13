@@ -1,4 +1,21 @@
 const { fetchAllProducts } = require("./services");
+const moment = require('moment-timezone')
+const fs = require('fs')
+
+function updateLog(message){
+    fs.appendFile('log.txt', '', error => {if(error)console.log('Error al crear el archivo: ', error)})
+    const newMessage = `[Chile: ${getCurrentDateChile()}] - [Server: ${getCurrentDateServer()}] -> ${message}\n`
+    console.log(newMessage);
+    fs.appendFile('log.txt', newMessage, (error) => { if(error)console.log('Hubo un error al actualizar el archivo: ', error)})
+}
+
+function getCurrentDateChile(){ 
+    return moment.tz('America/Santiago').format('DD/MMM/YYYY - HH:mm:ss') 
+}
+
+function getCurrentDateServer(){ 
+    return moment.tz().format('DD/MMM/YYYY - HH:mm:ss') 
+}
 
 
 async function getAllProductsWithPromotions(){
