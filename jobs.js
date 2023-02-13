@@ -1,6 +1,5 @@
-const { sendVipMessage, sendFreeMessage, sendTestMessage } = require("./jumbot");
+const { sendVipMessage, sendFreeMessage, sendTestMessage, sendPrivateMessage } = require("./jumbot");
 const {  getAllProductsWithTCPromotions, getPriceFormatted, getProductToSend, getAllProductsWithPromotions, getDateFormatted, getDateValue, checkedProducts } = require("./utils");
-
 
 
 async function sendTCPromotions({testing}){
@@ -20,7 +19,7 @@ async function sendTCPromotions({testing}){
     })
 }
 
-async function sendAllPromotions({vip, testing}){
+async function sendAllPromotions({testing}){
     const products = await getAllProductsWithPromotions()
     products.forEach( async (product, i) => {
         const productToSend = await getProductToSend(product)
@@ -34,30 +33,19 @@ async function sendAllPromotions({vip, testing}){
                 if(!promotion.tcenco && !promotion.cencoPrime) promotionNeeds = 'todo medio de pago'
                 if(promotion.tcenco) promotionNeeds = 'Tarjeta cencosud'
                 if(promotion.cencoPrime) promotionNeeds = 'Jumbo Prime'
-                if(!vip && getDateValue(promotion.start) >= Date.now().valueOf()) {
-                    return `Habra una oferta con *${promotionNeeds}*, _para saber fechas y valores ingresa al canal VIP_.\n`
-                }
                 return `Oferta con *${promotionNeeds}*: ${getPriceFormatted(promotionPrice)}\n_Esta oferta comienza el: ${getDateFormatted(promotion.start)} y termina el ${getDateFormatted(promotion.end)}_\nPublicada en: ${promotion.where}\n`
             })}URL: https://jumbo.cl/${productToSend.url}/p\n_Nota: El link no se abre con la app jumbo (ya descubriremos como hacerlo) se debe abrir desde el navegador_`)
 
         if(!testing){
-            if(vip) {
-                setTimeout( () => {
-                    sendVipMessage(newMessage)
-                },5000*i )
-            }
-            if(!vip) {
-                setTimeout( () => {
-                    sendFreeMessage(newMessage)
-                },5000*i)
-            }
+            setTimeout( () => {
+                sendPrivateMessage(newMessage)
+            },4000*i )
         } else {
-            // setTimeout( () => {
-            //     sendTestMessage(newMessage)
-            // },5000*i)
+            setTimeout( () => {
+                sendTestMessage(newMessage)
+            },4000*i)
         }
     })
-    sendTestMessage(products.length)
 }
 
 async function sendActivePromotions({testing}){
@@ -93,12 +81,26 @@ async function sendActivePromotions({testing}){
                 sendFreeMessage(newMessage)
             }, 4000*i)
         }
+
+        
+    })
+}
+
+async function saveAllActivePromotions({testing}){
+    let productsToSave = []
+    const products = await checkedProducts()
+    products.forEach( product => {
+        if(product.promotions.length > 0){
+            productsToSave.push(product)
+        }
+    })
+    productsToSave.forEach( product => {
+        savePromotion(product)
     })
 
 }
 
 module.exports = {
-    sendTCPromotions,
-    sendAllPromotions,
     sendActivePromotions,
+    sendAllPromotions,
 }
