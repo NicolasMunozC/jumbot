@@ -25,7 +25,7 @@ async function listeningBot(){
             sendMessage(chatId, `Bueno, me presento, soy *Jumbot*, un bot desarrollado para mostrarte las mejores ofertas de Jumbo 🥸.\nHe creado dos canales de difusion para esto, *uno gratuito 🤩 y otro de pago 🤫*.\n\nEn mi *canal gratuito* enviare todas la ofertas que encuentre, *una vez al dia*. Con los precios actualizados hasta ese momento.\nEn el *canal VIP* 😎, es donde ocurre la magia, la suscripcion VIP, te da acceso al canal VIP, obviamente _dah 🫠_, ahi se publicaran los *productos en promocion y actualizando los precios cada hora.*\n\nAdemas de eso, todos los *usuarios VIP*, los tengo guardados en mi agenda, y apenas encuentre un cambio de precio *desde 50% de descuento o mas*, les notificare directamente en su chat 😏.\n\n_Nota: Mi creador dice que no se quiere hacer rico 🙄, bueno si, pero no 'robandoles' 🤷🏽‍♂️ , solo necesita el dinero para poder seguir con el proyecto, ya saben pagar servidor y apps y todo eso, cosas que yo no entiendo... Ni que fuera un robot... 🤖 _`)
         }
         if(msg.text === '/free'){
-            const userData = getUserData({userId: userId})
+            const userData = getUserData(userId)
             if(!userData) saveUser(newUser)
             sendMessage(chatId, `${userName}, puedes entrar al canal con el siguiente enlace! 😄\nhttps://t.me/+RGByI7679pAxZGQx \n*Nota:* _No compartas este enlace, quien quiera ingresar debe solicitarmelo a mi para aceptarlo/a  jeje! 😳_`)
         }
@@ -40,7 +40,7 @@ async function listeningBot(){
         if(req.from.is_bot) await bot.declineChatJoinRequest(channelId, userId)
         const freeChannelId = process.env.FREE_CHAT_ID
         const vipChannelId = process.env.VIP_CHAT_ID
-        const userData = await getUserData({userId: userId})
+        const userData = await getUserData(userId)
         if(!userData) await bot.declineChatJoinRequest(req.chat.id, req.from.id)
         if(userData){
             if(channelId === freeChannelId && userData.free) {
