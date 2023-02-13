@@ -8,6 +8,7 @@ async function getUserData(id){
 }
 
 async function saveUser(data){
+    if(!data) console.error('You must provide an User Object');
     const newUser = new User(data)
     return await newUser.save()   
 }
