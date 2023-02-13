@@ -6,8 +6,8 @@ const { listeningBot } = require('./jumbot')
 const { sendActivePromotions, sendAllPromotions } = require('./jobs');
 const { updateLog } = require('./utils');
 
-const testing = false
-const version = 1.0
+const testing = true
+const version = '1.0'
 
 async function startBot(){
     updateLog(`Bot iniciado, version:${version}.`)
