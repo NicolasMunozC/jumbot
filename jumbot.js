@@ -63,22 +63,22 @@ function sendMessage(id, message){
 }
 
 function sendTestMessage(message){
-    if(!message) console.error('You need to provide a MESSAGE');
+    if(!message) console.error('You need to provide a MESSAGE')
     bot.sendMessage(testChatId, message, opts)
 }
 
 function sendVipMessage(message){
-    if(!message) console.error('You need to provide a MESSAGE');
+    if(!message) console.error('You need to provide a MESSAGE')
     bot.sendMessage(vipChatId, message, opts)
 }
 
 function sendFreeMessage(message){
-    if(!message) console.error('You need to provide a MESSAGE');
+    if(!message) console.error('You need to provide a MESSAGE')
     bot.sendMessage(freeChatId, message, opts)
 }
 
 function sendPrivateMessage(message){
-    if(!message) console.error('You need to provide a MESSAGE');
+    if(!message) console.error('You need to provide a MESSAGE')
     bot.sendMessage(privateChatId, message, opts)
 }
 
