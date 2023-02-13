@@ -145,6 +145,21 @@ async function getProductsWithCheckedValidPromotions(){
     return checkedProducts
 }
 
+// FUNCTION TO CHECK IF OFFER IS 50% OR MORE
+function checkSuperOffer(products){
+    const checkedProducts = []
+    products.forEach( product => {
+        const normalPrice = product.normalPrice
+        const offerPrice = product.offerPrice
+        const percentageNormalOffer = ( (1 - (offerPrice / normalPrice)) * 100)
+        if( percentageNormalOffer > 50 ){
+            checkedProducts.push(product)
+        }
+
+    })
+    return checkedProducts
+}
+
 
 module.exports = {
     getAllProductsWithTCPromotions,
@@ -156,5 +171,6 @@ module.exports = {
     getDateValue,
     checkPromotions,
     getProductsWithCheckedValidPromotions,
-    updateLog
+    updateLog,
+    checkSuperOffer,
 }
