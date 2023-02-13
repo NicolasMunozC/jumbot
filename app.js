@@ -1,16 +1,15 @@
 const dotenv = require('dotenv').config()
 const cron = require('cron');
 const { dbConnect } = require('./db')
-const Product = require('./models/Product')
 const { listeningBot } = require('./jumbot')
-const { sendActivePromotions, sendAllPromotions } = require('./jobs');
+const { sendActivePromotions, sendAllPromotions, sendVipSuperOffers } = require('./jobs');
 const { updateLog } = require('./utils');
 
-const testing = false
-const version = '1.0'
+const testing = true
+const version = '1.1'
 
 async function startBot(){
-    updateLog(`Bot iniciado, version:${version}.`)
+    updateLog(`Bot iniciado || Version: ${version}.`)
     await dbConnect()
     updateLog('[DB] Conectada.')
     listeningBot()
@@ -18,18 +17,20 @@ async function startBot(){
     if(!testing) jumbot.start() //PRODUCTION FUNCTION
 }
 
-const jumbot = new cron.CronJob('00 7 * * *', async function() {
+const jumbot = new cron.CronJob('00 15 * * *', async function() {
     updateLog('Se ejecutan tareas programadas...')
     await sendActivePromotions({testing: testing})
     await sendAllPromotions({testing: testing})
+    await sendVipSuperOffers({testing: testing})
     updateLog('Tareas programadas completadas.')
 });
 
 
 async function cronSimulator(){
     console.log('SE EJECUTA SIMULADOR DE TESTING');
-    await sendActivePromotions({testing: testing})
-    await sendAllPromotions({testing: testing})
+    // await sendActivePromotions({testing: testing})
+    // await sendAllPromotions({testing: testing})
+    await sendVipSuperOffers({testing: testing})
     console.log('SE COMPLETO SIMULADOR DE TESTING');
 }
 
