@@ -1,9 +1,10 @@
 const mongoose = require('mongoose')
+const { updateLog } = require('./utils')
 
 const uri = process.env.DB_URI
 
 function dbConnect() {
-    console.log('[DB] connecting')
+    updateLog('[DB] Conectando...')
     mongoose.set('strictQuery', false)
     return mongoose.connect( uri, { useNewUrlParser: true, useUnifiedTopology: true} )
 }
