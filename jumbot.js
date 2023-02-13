@@ -57,18 +57,22 @@ async function listeningBot(){
 }
 
 function sendMessage(id, message){
+    if(!id || !message) console.error('You need to provide an ID, and a MESSAGE');
     bot.sendMessage(id, message, opts)
 }
 
 function sendTestMessage(message){
+    if(!message) console.error('You need to provide a MESSAGE');
     bot.sendMessage(testChatId, message, opts)
 }
 
 function sendVipMessage(message){
+    if(!message) console.error('You need to provide a MESSAGE');
     bot.sendMessage(vipChatId, message, opts)
 }
 
 function sendFreeMessage(message){
+    if(!message) console.error('You need to provide a MESSAGE');
     bot.sendMessage(freeChatId, message, opts)
 }
 
