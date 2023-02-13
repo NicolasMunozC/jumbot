@@ -6,6 +6,7 @@ const token = process.env.TELEGRAM_TOKEN_API;
 const vipChatId = process.env.VIP_CHAT_ID
 const freeChatId = process.env.FREE_CHAT_ID
 const testChatId = process.env.TEST_CHAT_ID
+const privateChatId = process.env.PRIVATE_CHAT_ID
 
 const bot = new TelegramBot(token, {polling: true});
 
@@ -76,10 +77,16 @@ function sendFreeMessage(message){
     bot.sendMessage(freeChatId, message, opts)
 }
 
+function sendPrivateMessage(message){
+    if(!message) console.error('You need to provide a MESSAGE');
+    bot.sendMessage(privateChatId, message, opts)
+}
+
 module.exports = {
     listeningBot,
     sendMessage,
     sendVipMessage,
     sendFreeMessage,
     sendTestMessage,
+    sendPrivateMessage,
 }
