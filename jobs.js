@@ -1,5 +1,5 @@
 const { sendVipMessage, sendFreeMessage, sendTestMessage, sendPrivateMessage } = require("./jumbot");
-const {  getPriceFormatted, getProductToSend, getAllProductsWithPromotions, getDateFormatted, getDateValue, getProductsWithCheckedValidPromotions, checkSuperOffer } = require("./utils");
+const {  getPriceFormatted, getProductToSend, getAllProductsWithPromotions, getDateFormatted, getProductsWithCheckedValidPromotions, checkSuperOffer } = require("./utils");
 
 
 async function sendAllPromotions({testing}){
@@ -11,7 +11,7 @@ async function sendAllPromotions({testing}){
                 const promotionType = promotion.type
                 let promotionPrice = 0
                 let promotionNeeds = ''
-                if(promotionType === 'm'){ promotionPrice = promotion.value }
+                if(promotionType === 'm'){ promotion.quantity === 1 ? promotionPrice = promotion.value : promotionPrice = promotion.value * promotion.quantity }
                 if(promotionType === 'p') { promotionPrice = ((productToSend.normalPrice)*(1-(promotion.value/100)))}
                 if(!promotion.tcenco && !promotion.cencoPrime) promotionNeeds = 'todo medio de pago'
                 if(promotion.tcenco) promotionNeeds = 'Tarjeta cencosud'
